@@ -1,12 +1,33 @@
-io = require('socket.io').listen(3001);
 var Netcat = require('node-netcat');
+var http = require("http");
+var os = require('os');
+var ifaces = os.networkInterfaces();
+
 var client = Netcat.client(23, '192.168.1.126');
 var client2 = Netcat.client(23, '192.168.1.165');
-var pin  = 5
-var brightness = 0
-var http = require("http");
 client.start();
 client2.start();
+
+Object.keys(ifaces).forEach(function (ifname) {
+  var alias = 0;
+
+  ifaces[ifname].forEach(function (iface) {
+    if ('IPv4' !== iface.family || iface.internal !== false) {
+      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+      return;
+    }
+
+    if (alias >= 1) {
+      // this single interface has multiple ipv4 addresses
+      console.log(ifname + ':' + alias, iface.address);
+    } else {
+      // this interface has only one ipv4 adress
+      console.log(ifname, iface.address);
+      ip = iface.address;
+    }
+    ++alias;
+  });
+});
 
 function handler(req, res){
 
@@ -18,7 +39,7 @@ function handler(req, res){
         <meta charset="UTF-8">  \
 	<script src="https://cdn.socket.io/socket.io-1.4.4.js"></script> \
 	<script> \
-	var socket = io.connect(\'http://192.168.1.151:3001\'); \
+	var socket = io.connect(\'http://'+ip+':3001\'); \
 	function updateOutput(no,val) { \
 		socket.emit("slider", {pin: no, value: val}); \
 	} \
@@ -39,6 +60,11 @@ function handler(req, res){
 	input { \
 	  display: block; \
 	} \
+	div { \
+	  border-radius: 25px; \
+	  border: 2px solid #a0a0a0; \
+	  padding: 20px; \
+	} \
 	</style> \
     <title>NodeJS Slider</title> \
 </head> \
@@ -48,7 +74,9 @@ function handler(req, res){
 	<input type="range" min="0" max="1023" step="1" oninput="updateOutput(5,value)"> \
 	<br> \
 	<input type="range" min="0" max="1023" step="1" oninput="updateOutput(2,value)"> \
+	</div> \
 	<h1>Computer light </h1> \
+	<div> \
 	<input type="range" min="0" max="1023" step="1" oninput="updateOutput(7,value)"> \
 	</div> \
 </body> \
@@ -58,12 +86,14 @@ function handler(req, res){
   res.writeHead(200);
   res.end(form);
 };
+
+io = require('socket.io').listen(3001);
 io.sockets.on('connection', function(socket) {
 
 // receive changed value of slider send by client
 socket.on('slider', function(data){
-	brightness = data.value ;
-	pin = data.pin;
+	var brightness = data.value ;
+	var pin = data.pin;
 	if(pin == 7) {
 		client2.send('fade('+brightness+','+pin+')' + '\n', false);
 	}

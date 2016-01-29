@@ -1,7 +1,7 @@
 var gid=0;
 var presetvalue;
 var pin;
-var socket = io.connect('http://127.0.0.1:3001');
+var socket = io.connect('http://192.168.1.151:3001');
 
 var brightnesses = [];
 

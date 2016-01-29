@@ -24,6 +24,8 @@ module.exports = {
       	else {
       		self.clients[0].send('fade('+brightness+','+pin+')' + '\n', false);
       	}
+
+        connectCallback();
         //  client.send('pwm.setduty('+pin+','+brightness+')' + '\n', false);
     	 console.log("Pin "+ pin + ", Slider Value: " + brightness);
       });

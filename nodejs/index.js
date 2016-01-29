@@ -12,13 +12,16 @@ var pin;
 var ifaces = os.networkInterfaces();
 
 var dataCallback = function (data) {
-  console.log('hej data', data);
   console.log(data.indexOf('brightness'));
 
   if (data.indexOf('brightness:') > -1) {
+
     var brightness = data.replace('brightness:', '');
 
+    console.log('Got brightness data', brightness, socketModule.socket !== null);
+
     if (socketModule.socket !== null) {
+      console.log('emitting...');
       socketModule.socket.emit('brightness', { 'brightness': brightness });
     }
   }

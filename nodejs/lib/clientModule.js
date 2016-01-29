@@ -2,7 +2,7 @@ module.exports = {
   setup: function (clients, dataCallback) {
     clients.map(function (client) {
       client.start();
-
+      
       client.on('open', function () {
         console.log('connect');
       });
@@ -18,6 +18,7 @@ module.exports = {
 
       client.on('close', function (data) {
         console.log('close', data);
+        client.start();
       });
     });
   },

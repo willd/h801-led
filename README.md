@@ -5,3 +5,8 @@ The H801 uses the secondary TX for UART0 (gpio2), so standard nodeMCU, Arduino e
 but is quite manageable.
 
 This project properly runs on a first generation Raspberry Pi with minimal delays
+
+TODO:
+Reintroduce dynamic ip management for sockets
+Intro site with ability to add new hosts
+Actual write-up containing a howto on nodemcu, the h801 and more

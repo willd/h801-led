@@ -3,20 +3,42 @@ var http = require('http');
 var os = require('os');
 var dirty = require('dirty');
 var db = dirty('presets.db');
-var presetvalue;
+
 var id;
 var pin;
 var ifaces = os.networkInterfaces();
 
-var client = Netcat.client(23, '192.168.1.126');
-var client2 = Netcat.client(23, '192.168.1.165');
+var clients = [
+  Netcat.client(23, '192.168.1.126'),
+  Netcat.client(23, '192.168.1.165')
+];
 
 url = require('url'),
 fs = require('fs');
 path = require('path');
 var sys = require('sys');
-client.start();
-client2.start();
+
+clients.map(function (client) {
+  console.log('Starting client', client);
+  client.start();
+
+  client.on('open', function () {
+    console.log('connect');
+  });
+
+  client.on('data', function (data) {
+    console.log(data.toString('ascii'));
+  });
+
+  client.on('error', function (err) {
+    console.log(err);
+    this.start();
+  });
+
+  client.on('close', function () {
+    console.log('close');
+  });
+});
 
 Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;
@@ -91,10 +113,10 @@ socket.on('slider', function(data){
 	var pin = data.pin;
 
 	if(data.id == 2) {
-		client2.send('fade('+brightness+','+pin+')' + '\n', false);
+		clients[1].send('fade('+brightness+','+pin+')' + '\n', false);
 	}
 	else {
-		client.send('fade('+brightness+','+pin+')' + '\n', false);
+		clients[0].send('fade('+brightness+','+pin+')' + '\n', false);
 	}
 //  client.send('pwm.setduty('+pin+','+brightness+')' + '\n', false);
 	console.log("Pin "+ pin + ", Slider Value: " + brightness);    });
@@ -113,15 +135,14 @@ socket.on('setbutton', function(data){
 	preset = db.get(data.id);
 	console.log("Setting preset: "+preset.value);
 	if(data.id == 2) {
-		client2.send('fade('+preset.value+','+preset.pin+')' + '\n', false);
+		clients[1].send('fade('+preset.value+','+preset.pin+')' + '\n', false);
 	}
 	else {
-		client.send('fade('+preset.value+','+preset.pin+')' + '\n', false);
+		clients[0].send('fade('+preset.value+','+preset.pin+')' + '\n', false);
 	}
 	});
 
 });
-
 
 http.createServer(handler).listen(3000, function(err){
   if(err){
@@ -129,38 +150,4 @@ http.createServer(handler).listen(3000, function(err){
   } else {
     console.log("Server running at http://localhost:3000/");
   };
-});
-
-client.on('open', function () {
-  console.log('connect');
-});
-
-client.on('data', function (data) {
-  console.log(data.toString('ascii'));
-});
-
-client.on('error', function (err) {
-  console.log(err);
-  this.start();
-});
-
-client2.on('close', function () {
-  console.log('close');
-});
-
-client2.on('open', function () {
-  console.log('connect');
-});
-
-client2.on('data', function (data) {
-  console.log(data.toString('ascii'));
-});
-
-client2.on('error', function (err) {
-  console.log(err);
-  this.start();
-});
-
-client2.on('close', function () {
-  console.log('close');
 });

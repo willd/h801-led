@@ -13,9 +13,9 @@ var clients = [
   Netcat.client(23, '192.168.1.165')
 ];
 
-url = require('url'),
-fs = require('fs');
-path = require('path');
+var url = require('url'),
+var fs = require('fs');
+var path = require('path');
 var sys = require('sys');
 
 clients.map(function (client) {

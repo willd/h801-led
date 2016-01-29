@@ -6,6 +6,8 @@ but is quite manageable.
 
 This project properly runs on a first generation Raspberry Pi with minimal delays
 
+![Screenshot of interface](https://github.com/willd/h801-led/so.png)
+
 TODO:
 Reintroduce dynamic ip management for sockets
 Intro site with ability to add new hosts

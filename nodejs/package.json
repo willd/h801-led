@@ -1,10 +1,10 @@
 {
   "name": "h801-led",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "dependencies": {
     "dirty": "^1.0.0",
+    "http": "0.0.0",
     "node-netcat": "^1.4.8",
     "socket.io": "^1.4.5"
   },
@@ -16,12 +16,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/willd/h801-led.git"
+    "url": "git+https://github.com/willd/h801-led.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/willd/h801-led/issues"
   },
-  "homepage": "https://github.com/willd/h801-led#readme"
+  "homepage": "https://github.com/willd/h801-led#readme",
+  "description": ""
 }

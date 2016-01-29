@@ -11,7 +11,7 @@ end
 end
 
 function readBrightness(pin)
-  return pwn.getduty(pin)
+  return print(pwm.getduty(pin))
 end
 
 fade(250,5)

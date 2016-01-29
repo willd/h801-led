@@ -31,6 +31,6 @@ function setupTelnetServer()
     sock:send("Welcome to NodeMCU world.\n> ")
   end
 
-  telnetServer = net.createServer(net.TCP, 180)
+  telnetServer = net.createServer(net.TCP, 720)
   telnetServer:listen(23, listenFun)
 end

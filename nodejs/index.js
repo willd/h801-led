@@ -90,7 +90,8 @@ io = require('socket.io').listen(3001);
 
 io.sockets.on('connection', function (socket) {
 
-console.log('TEST', clientModule.getBrightness(clients[0], 7));
+  console.log('TEST', clientModule.getBrightness(clients[0], 2));
+  console.log('TEST', clientModule.getBrightness(clients[0], 5));
 
   // receive changed value of slider send by client
   socket.on('slider', function (data) {

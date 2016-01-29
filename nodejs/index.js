@@ -1,20 +1,20 @@
 var Netcat = require('node-netcat');
-var http = require("http");
+var http = require('http');
 var os = require('os');
 var dirty = require('dirty');
 var db = dirty('presets.db');
 var presetvalue;
-var id
-var pin
+var id;
+var pin;
 var ifaces = os.networkInterfaces();
 
 var client = Netcat.client(23, '192.168.1.126');
 var client2 = Netcat.client(23, '192.168.1.165');
 
-url = require("url"),
-fs = require("fs");
-path = require("path");
-var sys = require("sys");
+url = require('url'),
+fs = require('fs');
+path = require('path');
+var sys = require('sys');
 client.start();
 client2.start();
 
@@ -58,25 +58,25 @@ function handler(req, res){
   var full_path = path.join(process.cwd(),my_path);
     fs.exists(full_path,function(exists){
         if(!exists){
-            res.writeHeader(404, {"Content-Type": "text/plain"});  
-            res.write("404 Not Found\n");  
+            res.writeHeader(404, {"Content-Type": "text/plain"});
+            res.write("404 Not Found\n");
             res.end();
         }
-	
+
         else{
-            fs.readFile(full_path, "binary", function(err, file) {  
-                 if(err) {  
-                     res.writeHeader(500, {"Content-Type": "text/plain"});  
-                     res.write(err + "\n");  
-                     res.end();  
-                
-                 }  
+            fs.readFile(full_path, "binary", function(err, file) {
+                 if(err) {
+                     res.writeHeader(500, {"Content-Type": "text/plain"});
+                     res.write(err + "\n");
+                     res.end();
+
+                 }
                   else{
-                    res.writeHeader(200);  
-                    res.write(file, "binary");  
+                    res.writeHeader(200);
+                    res.write(file, "binary");
                     res.end();
                 }
-                      
+
             });
         }
     });
@@ -89,7 +89,7 @@ io.sockets.on('connection', function(socket) {
 socket.on('slider', function(data){
 	var brightness = data.value ;
 	var pin = data.pin;
-	
+
 	if(data.id == 2) {
 		client2.send('fade('+brightness+','+pin+')' + '\n', false);
 	}
@@ -98,7 +98,7 @@ socket.on('slider', function(data){
 	}
 //  client.send('pwm.setduty('+pin+','+brightness+')' + '\n', false);
 	console.log("Pin "+ pin + ", Slider Value: " + brightness);    });
-	
+
 socket.on('savebutton', function(data){
 	id = data.id;
 	value = data.value ;
@@ -111,7 +111,7 @@ socket.on('savebutton', function(data){
 socket.on('setbutton', function(data){
 	console.log("Preset data: "+ data);
 	preset = db.get(data.id);
-	console.log("Setting preset: "+preset.value); 
+	console.log("Setting preset: "+preset.value);
 	if(data.id == 2) {
 		client2.send('fade('+preset.value+','+preset.pin+')' + '\n', false);
 	}
@@ -119,7 +119,7 @@ socket.on('setbutton', function(data){
 		client.send('fade('+preset.value+','+preset.pin+')' + '\n', false);
 	}
 	});
-		
+
 });
 
 
@@ -164,4 +164,3 @@ client2.on('error', function (err) {
 client2.on('close', function () {
   console.log('close');
 });
-

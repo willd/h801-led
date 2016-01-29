@@ -22,8 +22,6 @@ var fs = require('fs');
 var path = require('path');
 var sys = require('sys');
 
-
-
 Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;
 
@@ -89,21 +87,25 @@ function handler(req, res){
 };
 
 io = require('socket.io').listen(3001);
-io.sockets.on('connection', function(socket) {
 
-// receive changed value of slider send by client
-socket.on('slider', function(data){
-	var brightness = data.value ;
-	var pin = data.pin;
+io.sockets.on('connection', function (socket) {
 
-	if(data.id == 2) {
-		clients[1].send('fade('+brightness+','+pin+')' + '\n', false);
-	}
-	else {
-		clients[0].send('fade('+brightness+','+pin+')' + '\n', false);
-	}
-//  client.send('pwm.setduty('+pin+','+brightness+')' + '\n', false);
-	console.log("Pin "+ pin + ", Slider Value: " + brightness);    });
+  console.log('TEST', clientModule.getBrightness(clients[0], 7));
+
+  // receive changed value of slider send by client
+  socket.on('slider', function (data) {
+  	var brightness = data.value;
+  	var pin = data.pin;
+
+  	if (data.id === 2) {
+  		clients[1].send('fade('+brightness+','+pin+')' + '\n', false);
+  	}
+  	else {
+  		clients[0].send('fade('+brightness+','+pin+')' + '\n', false);
+  	}
+    //  client.send('pwm.setduty('+pin+','+brightness+')' + '\n', false);
+	 console.log("Pin "+ pin + ", Slider Value: " + brightness);
+  });
 
 socket.on('savebutton', function(data){
 	id = data.id;

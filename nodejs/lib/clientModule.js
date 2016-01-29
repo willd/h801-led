@@ -21,6 +21,6 @@ module.exports = {
     });
   },
   getBrightness: function (client, pin) {
-    client.send('readBrightness' + pin + ')' + '\n', false);
+    return client.send('readBrightness(' + pin + ')' + '\n', false);
   }
 };

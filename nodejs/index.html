@@ -1,0 +1,65 @@
+<!doctype html> 
+        <html lang="en"> 
+        <head> 
+        <meta charset="UTF-8">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.1, height=device-height"> 
+        <script src="socket.io.min.js"></script> 
+        <script src="socket.js"> </script> 
+        <style> 
+        h1 { 
+          font-family: "Arial"; 
+        } 
+        body { 
+          color: #404040; 
+          display: flex; 
+          flex-direction: column; 
+          justify-content: space-around; 
+          align-items: center; 
+          padding: 50px; 
+        } 
+        input { 
+          display: block; 
+        } 
+        div.cell { 
+          display: flex; 
+          flex-direction: column; 
+          justify-content: space-around; 
+          align-items: center; 
+          border-radius: 25px; 
+          border: 2px solid #a0a0a0; 
+          padding: 20px;
+	  min-width: 12em;
+        } 
+	#presets {
+	  vertical-align: middle
+	}
+	div.cell :not(:first-child) {
+	margin-top:0.5em;
+	}
+        </style> 
+    <title>NodeJS Slider</title> 
+</head> 
+<body> 
+        <h1>Desk light</h1> 
+        <div id="computer" class="cell"> 
+        <input type="range" min="0" max="1023" step="1" oninput="updateOutput(0,5,value)"> 
+        <input type="range" min="0" max="1023" step="1" oninput="updateOutput(1,2,value)"> 
+        </div> 
+        <h1>Computer light </h1> 
+        <div class="cell"> 
+        <input type="range" min="0" max="1023" step="1" oninput="updateOutput(2,7,value)"> 
+        </div> 
+        <h1>Presets </h1> 
+	<div id="presets" class="cell">
+        <button type="button" onclick="savePreset(gid,pin,presetvalue)">Save preset</button> 
+	<div>
+	<button type="button" onclick="setPreset(gid,pin,presetvalue)">Load preset</button> 
+	<select onchange="choosePreset(value)">
+		<option selected="selected">0</option>
+		<option>1</option>
+		<option>2</option>
+	</select>
+	</div>
+	</div>
+</body> 
+</html>

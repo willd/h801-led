@@ -11,9 +11,5 @@ end
 end
 
 function readBrightness(pin)
-  return print(pwm.getduty(pin))
+  return print('brightness:' .. pwm.getduty(pin))
 end
-
-fade(250,5)
-fade(250,2)
-fade(250,7)

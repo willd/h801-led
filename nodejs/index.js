@@ -5,17 +5,37 @@ var dirty = require('dirty');
 var db = dirty('presets.db');
 
 var clientModule = require('./lib/clientModule');
+var socketModule = require('./lib/socketModule');
 
 var id;
 var pin;
 var ifaces = os.networkInterfaces();
+
+var dataCallback = function (data) {
+  console.log('hej data', data);
+  console.log(data.indexOf('brightness'));
+
+  if (data.indexOf('brightness:') > -1) {
+    var brightness = data.replace('brightness:', '');
+
+    if (socketModule.socket !== null) {
+      socketModule.socket.emit('brightness', { 'brightness': brightness });
+    }
+  }
+};
 
 var clients = [
   Netcat.client(23, '192.168.1.126'),
   Netcat.client(23, '192.168.1.165')
 ];
 
-clientModule.setup(clients);
+socketModule.clients = clients;
+
+var connectCallback = function () {
+  clientModule.getBrightness(clients[1], 7);
+};
+
+clientModule.setup(clients, dataCallback);
 
 var url = require('url');
 var fs = require('fs');
@@ -86,50 +106,7 @@ function handler(req, res){
   });
 };
 
-io = require('socket.io').listen(3001);
-
-io.sockets.on('connection', function (socket) {
-
-  console.log('TEST', clientModule.getBrightness(clients[0], 2));
-  console.log('TEST', clientModule.getBrightness(clients[0], 5));
-
-  // receive changed value of slider send by client
-  socket.on('slider', function (data) {
-  	var brightness = data.value;
-  	var pin = data.pin;
-
-  	if (data.id === 2) {
-  		clients[1].send('fade('+brightness+','+pin+')' + '\n', false);
-  	}
-  	else {
-  		clients[0].send('fade('+brightness+','+pin+')' + '\n', false);
-  	}
-    //  client.send('pwm.setduty('+pin+','+brightness+')' + '\n', false);
-	 console.log("Pin "+ pin + ", Slider Value: " + brightness);
-  });
-
-socket.on('savebutton', function(data){
-	id = data.id;
-	value = data.value ;
-	pin = data.pin;
-	console.log("Preset, id: "+id+", value: "+value+", pin: "+pin);
-	if(db.get(id) == '') {
-		db.rm(id);
-	}
-	db.set(id, {value: value, pin: pin}); });
-socket.on('setbutton', function(data){
-	console.log("Preset data: "+ data);
-	preset = db.get(data.id);
-	console.log("Setting preset: "+preset.value);
-	if(data.id == 2) {
-		clients[1].send('fade('+preset.value+','+preset.pin+')' + '\n', false);
-	}
-	else {
-		clients[0].send('fade('+preset.value+','+preset.pin+')' + '\n', false);
-	}
-	});
-
-});
+socketModule.start(connectCallback);
 
 http.createServer(handler).listen(3000, function(err){
   if(err){

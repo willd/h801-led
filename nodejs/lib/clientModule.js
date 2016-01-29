@@ -1,5 +1,5 @@
 module.exports = {
-  setup: function (clients) {
+  setup: function (clients, dataCallback) {
     clients.map(function (client) {
       client.start();
 
@@ -9,6 +9,7 @@ module.exports = {
 
       client.on('data', function (data) {
         console.log('[DATA]', data.toString('ascii'));
+        dataCallback(data.toString('ascii'));
       });
 
       client.on('error', function (err) {

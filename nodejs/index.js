@@ -4,6 +4,8 @@ var os = require('os');
 var dirty = require('dirty');
 var db = dirty('presets.db');
 
+var clientModule = require('./lib/clientModule');
+
 var id;
 var pin;
 var ifaces = os.networkInterfaces();
@@ -13,32 +15,14 @@ var clients = [
   Netcat.client(23, '192.168.1.165')
 ];
 
-var url = require('url'),
+clientModule.setup(clients);
+
+var url = require('url');
 var fs = require('fs');
 var path = require('path');
 var sys = require('sys');
 
-clients.map(function (client) {
-  console.log('Starting client', client);
-  client.start();
 
-  client.on('open', function () {
-    console.log('connect');
-  });
-
-  client.on('data', function (data) {
-    console.log(data.toString('ascii'));
-  });
-
-  client.on('error', function (err) {
-    console.log(err);
-    this.start();
-  });
-
-  client.on('close', function () {
-    console.log('close');
-  });
-});
 
 Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;

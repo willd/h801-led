@@ -1,0 +1,30 @@
+h1 {
+  font-family: "Arial";
+}
+body {
+  color: #404040;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 50px;
+}
+input {
+  display: block;
+}
+div.cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 25px;
+  border: 2px solid #a0a0a0;
+  padding: 20px;
+min-width: 12em;
+}
+#presets {
+vertical-align: middle
+}
+div.cell :not(:first-child) {
+margin-top:0.5em;
+}

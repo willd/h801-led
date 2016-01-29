@@ -26,20 +26,20 @@ Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;
 
   ifaces[ifname].forEach(function (iface) {
-    if ('IPv4' !== iface.family || iface.internal !== false) {
-      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
-      return;
-    }
+  if ('IPv4' !== iface.family || iface.internal !== false) {
+    // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+    return;
+  }
 
-    if (alias >= 1) {
-      // this single interface has multiple ipv4 addresses
-      console.log(ifname + ':' + alias, iface.address);
-    } else {
-      // this interface has only one ipv4 adress
-      console.log(ifname, iface.address);
-      ip = iface.address;
-    }
-    ++alias;
+  if (alias >= 1) {
+    // this single interface has multiple ipv4 addresses
+    console.log(ifname + ':' + alias, iface.address);
+  } else {
+    // this interface has only one ipv4 adress
+    console.log(ifname, iface.address);
+    ip = iface.address;
+  }
+  ++alias;
   });
 });
 
@@ -48,7 +48,7 @@ db.on('load', function() {
   });
 
   db.forEach(function(key, val) {
-    console.log('Found key: %s, val: %j', key, val);
+  console.log('Found key: %s, val: %j', key, val);
   });
 
 db.on('drain', function() {
@@ -60,37 +60,37 @@ function handler(req, res){
   var form = '';
   var my_path = url.parse(req.url).pathname;
   var full_path = path.join(process.cwd(),my_path);
-    fs.exists(full_path,function(exists){
-        if(!exists){
-            res.writeHeader(404, {"Content-Type": "text/plain"});
-            res.write("404 Not Found\n");
-            res.end();
+  fs.exists(full_path,function(exists){
+    if(!exists){
+      res.writeHeader(404, {"Content-Type": "text/plain"});
+      res.write("404 Not Found\n");
+      res.end();
+    }
+
+    else{
+      fs.readFile(full_path, "binary", function(err, file) {
+         if(err) {
+           res.writeHeader(500, {"Content-Type": "text/plain"});
+           res.write(err + "\n");
+           res.end();
+
+         }
+          else{
+          res.writeHeader(200);
+          res.write(file, "binary");
+          res.end();
         }
 
-        else{
-            fs.readFile(full_path, "binary", function(err, file) {
-                 if(err) {
-                     res.writeHeader(500, {"Content-Type": "text/plain"});
-                     res.write(err + "\n");
-                     res.end();
-
-                 }
-                  else{
-                    res.writeHeader(200);
-                    res.write(file, "binary");
-                    res.end();
-                }
-
-            });
-        }
-    });
+      });
+    }
+  });
 };
 
 io = require('socket.io').listen(3001);
 
 io.sockets.on('connection', function (socket) {
 
-  console.log('TEST', clientModule.getBrightness(clients[0], 7));
+console.log('TEST', clientModule.getBrightness(clients[0], 7));
 
   // receive changed value of slider send by client
   socket.on('slider', function (data) {
@@ -132,8 +132,8 @@ socket.on('setbutton', function(data){
 
 http.createServer(handler).listen(3000, function(err){
   if(err){
-    console.log('Error starting http server');
+  console.log('Error starting http server');
   } else {
-    console.log("Server running at http://localhost:3000/");
+  console.log("Server running at http://localhost:3000/");
   };
 });

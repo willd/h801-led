@@ -1,16 +1,16 @@
-io = require('socket.io').listen(3001);
-
 module.exports = {
   socket: null,
   clients: [],
-  start: function (connectCallback) {
+  start: function (http, connectCallback) {
     var self = this;
+
+    io = require('socket.io').listen(http);
     io.sockets.on('connection', function (socket) {
 
       if (self.socket === null) {
         self.socket = socket;
+        console.log("socket is initially null here");
       }
-
       connectCallback();
 
       // receive changed value of slider send by client

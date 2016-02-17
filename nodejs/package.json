@@ -3,25 +3,26 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-  "dirty": "^1.0.0",
-  "http": "0.0.0",
-  "node-netcat": "^1.4.8",
-  "socket.io": "^1.4.5"
+    "dirty": "^1.0.0",
+    "express": "^4.13.4",
+    "http": "0.0.0",
+    "node-netcat": "^1.4.8",
+    "socket.io": "^1.4.5"
   },
   "devDependencies": {
-  "nodemon": "^1.8.1"
+    "nodemon": "^1.8.1"
   },
   "scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-  "type": "git",
-  "url": "git+https://github.com/willd/h801-led.git"
+    "type": "git",
+    "url": "git+https://github.com/willd/h801-led.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-  "url": "https://github.com/willd/h801-led/issues"
+    "url": "https://github.com/willd/h801-led/issues"
   },
   "homepage": "https://github.com/willd/h801-led#readme",
   "description": ""

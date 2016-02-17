@@ -1,8 +1,8 @@
 module.exports = {
-  setup: function (clients, dataCallback) {
+  start: function (clients, dataCallback) {
     clients.map(function (client) {
       client.start();
-      
+
       client.on('open', function () {
         console.log('connect');
       });

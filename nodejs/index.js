@@ -1,5 +1,6 @@
 var Netcat = require('node-netcat');
 var http = require('http');
+
 var os = require('os');
 var dirty = require('dirty');
 var db = dirty('presets.db');
@@ -9,7 +10,8 @@ var socketModule = require('./lib/socketModule');
 
 var id;
 var pin;
-var ifaces = os.networkInterfaces();
+
+
 
 var dataCallback = function (data) {
   console.log(data.indexOf('brightness'));
@@ -28,7 +30,8 @@ var dataCallback = function (data) {
 };
 
 var clients = [
-  Netcat.client(23, '192.168.1.126'),
+//  Netcat.client(8001,'localhost'),
+  Netcat.client(23,'192.168.1.126'),
   Netcat.client(23, '192.168.1.165')
 ];
 
@@ -36,35 +39,16 @@ socketModule.clients = clients;
 
 var connectCallback = function () {
   clientModule.getBrightness(clients[1], 7);
+
 };
 
-clientModule.setup(clients, dataCallback);
+
+clientModule.start(clients, dataCallback);
 
 var url = require('url');
 var fs = require('fs');
 var path = require('path');
-var sys = require('sys');
 
-Object.keys(ifaces).forEach(function (ifname) {
-  var alias = 0;
-
-  ifaces[ifname].forEach(function (iface) {
-  if ('IPv4' !== iface.family || iface.internal !== false) {
-    // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
-    return;
-  }
-
-  if (alias >= 1) {
-    // this single interface has multiple ipv4 addresses
-    console.log(ifname + ':' + alias, iface.address);
-  } else {
-    // this interface has only one ipv4 adress
-    console.log(ifname, iface.address);
-    ip = iface.address;
-  }
-  ++alias;
-  });
-});
 
 db.on('load', function() {
   console.log('Loading values from key-value store');
@@ -89,12 +73,12 @@ function handler(req, res){
       res.write("404 Not Found\n");
       res.end();
     }
-
     else{
       fs.readFile(full_path, "binary", function(err, file) {
          if(err) {
            res.writeHeader(500, {"Content-Type": "text/plain"});
-           res.write(err + "\n");
+           console.log(full_path+" ends up here")
+           res.write(err + "\n" );
            res.end();
 
          }
@@ -108,13 +92,11 @@ function handler(req, res){
     }
   });
 };
-
-socketModule.start(connectCallback);
-
-http.createServer(handler).listen(3000, function(err){
+var listener = http.createServer(handler).listen(3000, function(err){
   if(err){
   console.log('Error starting http server');
   } else {
   console.log("Server running at http://localhost:3000/");
   };
 });
+socketModule.start(listener, connectCallback);

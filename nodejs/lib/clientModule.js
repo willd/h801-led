@@ -25,8 +25,8 @@ module.exports = {
   stop: function (clients) {
     clients.map(function (client) {
       client.stop();
-    }
-  }
+    });
+  },
   getBrightness: function (client, pin) {
     return client.send('readBrightness(' + pin + ')' + '\n', false);
   }

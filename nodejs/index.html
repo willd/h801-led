@@ -25,15 +25,17 @@
     </div>
     <h1>Presets </h1>
 	<div id="presets" class="cell">
+    <div>
+    <button type="button" onclick="setPreset(gid,pin,presetvalue)">Load preset</button>
+    <select onchange="choosePreset(value)">
+      <option selected="selected">0</option>
+      <option>1</option>
+      <option>2</option>
+    </select>
+    </div>
+    
     <button type="button" onclick="savePreset(gid,pin,presetvalue)">Save preset</button>
-	<div>
-	<button type="button" onclick="setPreset(gid,pin,presetvalue)">Load preset</button>
-	<select onchange="choosePreset(value)">
-		<option selected="selected">0</option>
-		<option>1</option>
-		<option>2</option>
-	</select>
-	</div>
+
 	</div>
 </body>
 </html>

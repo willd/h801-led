@@ -4,16 +4,34 @@ var http = require('http');
 var os = require('os');
 var dirty = require('dirty');
 var db = dirty('presets.db');
-
+var clientdb = dirty('clients.db')
+var clients = [
+//  Netcat.client(8001,'localhost'),
+  //Netcat.client(23,'192.168.1.126'),
+  //Netcat.client(23, '192.168.1.165')
+];
 var clientModule = require('./lib/clientModule');
 var socketModule = require('./lib/socketModule');
+var initializationModule = require('./lib/initializationModule');
+var self = this;
+clientModule.closed = false;
+
+var clientCallback = function(data) {
+  console.log("Back in clientCallback");
+  clients.push (data);
+  //clientModule.closed = false;
+
+}
+
+if (clients.length === 0) {
+  console.log("init");
+initializationModule.start(clientdb,clientCallback);
+}
 
 var id;
 var pin;
 
-
-
-var dataCallback = function (data) {
+var dataCallback = function (client,data) {
   console.log(data.indexOf('brightness'));
 
   if (data.indexOf('brightness:') > -1) {
@@ -29,21 +47,16 @@ var dataCallback = function (data) {
   }
 };
 
-var clients = [
-//  Netcat.client(8001,'localhost'),
-  Netcat.client(23,'192.168.1.126'),
-  Netcat.client(23, '192.168.1.165')
-];
+
 
 socketModule.clients = clients;
 
+clientModule.start(clients, dataCallback);
+
 var connectCallback = function () {
-  clientModule.getBrightness(clients[1], 7);
+  //clientModule.getBrightness(clients[1], 7);
 
 };
-
-
-clientModule.start(clients, dataCallback);
 
 var url = require('url');
 var fs = require('fs');
@@ -59,6 +72,17 @@ db.on('load', function() {
   });
 
 db.on('drain', function() {
+  console.log('All records are saved on disk now.');
+});
+clientdb.on('load', function() {
+  console.log('Loading clients from key-value store');
+  });
+
+clientdb.forEach(function(key, val) {
+  console.log('Found key: %s, val: %j', key, val);
+  });
+
+clientdb.on('drain', function() {
   console.log('All records are saved on disk now.');
 });
 

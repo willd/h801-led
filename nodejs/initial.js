@@ -1,5 +1,7 @@
-var async = require('async');
+
+  var async = require('async');
 var scanner = require ('node-netcat').portscan ();
+var clientModule = require('./lib/clientModule');
 var range = [];
 var clients = [];
 
@@ -23,5 +25,14 @@ var workers = range.map( function (_host) {
 async.parallel (workers, function () {
   console.log("done with everything");
   console.log (clients);
+  clientModule.clients = clients;
+
+  clientModule.start(clients,dataCallback)
+
 
 });
+var dataCallback = function (data) {
+  if(data === "Welcome to NodeMCU world.") {
+
+  }
+}

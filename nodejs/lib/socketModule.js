@@ -3,13 +3,13 @@ module.exports = {
   clients: [],
   start: function (http, connectCallback) {
     var self = this;
+    console.log("Does this even run?");
 
     io = require('socket.io').listen(http);
     io.sockets.on('connection', function (socket) {
 
       if (self.socket === null) {
         self.socket = socket;
-        console.log("socket is initially null here");
       }
       connectCallback();
 

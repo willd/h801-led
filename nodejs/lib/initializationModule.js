@@ -1,11 +1,11 @@
 module.exports = {
-  start: function (db, clientCallback) {
+  start: function (db, pushClient, next) {
   var self = this;
   var async = require('async');
   var Netcat = require('node-netcat');
 
   var scanner = require ('node-netcat').portscan ();
-  //var clientModule = require('./clientModule');
+  var clientModule = require('./clientModule');
   var range = [];
   var clients = [];
   var addresses = [];
@@ -29,26 +29,30 @@ module.exports = {
     });
 
   async.parallel (workers, function () {
-    console.log("done with everything");
+    console.log("Finished scanning range");
     console.log (addresses);
+    var id = 0
     var clients = addresses.map(function(address) {
       return Netcat.client(23,address);
     });
+    //clientModule.start(clients,dataCallback);
     var cb = clients.map(function(client) {
-      clientCallback(client);
+      pushClient(client);
+      db.set(id,{address: client._host,pin: 2});
+      id=id+1;
     });
+    next ();
 
   });
 
 
   var dataCallback = function (client,data) {
     console.log(client._host+" "+data);
-    if(data === "Welcome to NodeMCU world.") {
+    if(data === "Welcome to NodeMCU world.\n>\n") {
       console.log("Client entry");
-      db.set({address: client._host,pin: 2});
+
     }
-    clientCallback(client);
-    return  0;
+    pushClient(client);
   }
 }
 }

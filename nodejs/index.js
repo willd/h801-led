@@ -5,6 +5,7 @@ var os = require('os');
 var dirty = require('dirty');
 var db = dirty('presets.db');
 var clientdb = dirty('clients.db')
+
 var clients = [
 //  Netcat.client(8001,'localhost'),
   //Netcat.client(23,'192.168.1.126'),
@@ -14,25 +15,27 @@ var clientModule = require('./lib/clientModule');
 var socketModule = require('./lib/socketModule');
 var initializationModule = require('./lib/initializationModule');
 var self = this;
+var blockingIO = true;
 clientModule.closed = false;
 
-var clientCallback = function(data) {
+var pushClient = function(data) {
   console.log("Back in clientCallback");
   clients.push (data);
-  //clientModule.closed = false;
+}
+var startClients = function() {
+
+  console.log("socket, client init");
+  socketModule.clients = clients;
+  clientModule.start(clients, dataCallback);
 
 }
 
-if (clients.length === 0) {
-  console.log("init");
-initializationModule.start(clientdb,clientCallback);
-}
 
 var id;
 var pin;
 
 var dataCallback = function (client,data) {
-  console.log(data.indexOf('brightness'));
+  //console.log(data.indexOf('brightness'));
 
   if (data.indexOf('brightness:') > -1) {
 
@@ -46,13 +49,6 @@ var dataCallback = function (client,data) {
     }
   }
 };
-
-
-
-socketModule.clients = clients;
-
-clientModule.start(clients, dataCallback);
-
 var connectCallback = function () {
   //clientModule.getBrightness(clients[1], 7);
 
@@ -66,26 +62,29 @@ var path = require('path');
 db.on('load', function() {
   console.log('Loading values from key-value store');
   });
-
-  db.forEach(function(key, val) {
-  console.log('Found key: %s, val: %j', key, val);
-  });
-
 db.on('drain', function() {
   console.log('All records are saved on disk now.');
 });
 clientdb.on('load', function() {
+
   console.log('Loading clients from key-value store');
+  clientdb.forEach(function(key, val) {
+    console.log('Found key: %s, val: %j', key, val);
+    clients.push(Netcat.client(23,val.address))
   });
+  blockingIO = false;
+  startClients();
 
-clientdb.forEach(function(key, val) {
-  console.log('Found key: %s, val: %j', key, val);
-  });
 
+});
 clientdb.on('drain', function() {
   console.log('All records are saved on disk now.');
 });
 
+if (clients.length == 0 && blockingIO == false) {
+  console.log("init");
+  initializationModule.start(clientdb, pushClient, startClients);
+}
 function handler(req, res){
 
   var form = '';

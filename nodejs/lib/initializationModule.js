@@ -38,7 +38,7 @@ module.exports = {
     //clientModule.start(clients,dataCallback);
     var cb = clients.map(function(client) {
       pushClient(client);
-      db.set(id,{address: client._host,pin: 2});
+      db.set(id,{address: client._host,pins: [2,5,7]});
       id=id+1;
     });
     next ();

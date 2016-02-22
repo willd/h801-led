@@ -16,7 +16,6 @@ var socketModule = require('./lib/socketModule');
 var initializationModule = require('./lib/initializationModule');
 var self = this;
 var blockingIO = true;
-clientModule.closed = false;
 
 var pushClient = function(data) {
   console.log("Back in clientCallback");
@@ -27,10 +26,11 @@ var startClients = function() {
   console.log("socket, client init");
   socketModule.clients = clients;
   clientModule.start(clients, dataCallback);
-
 }
-
-
+var startInit = function() {
+  console.log("init");
+  initializationModule.start(clientdb, pushClient, startClients);
+}
 var id;
 var pin;
 
@@ -68,23 +68,23 @@ db.on('drain', function() {
 clientdb.on('load', function() {
 
   console.log('Loading clients from key-value store');
-  clientdb.forEach(function(key, val) {
-    console.log('Found key: %s, val: %j', key, val);
-    clients.push(Netcat.client(23,val.address))
-  });
-  blockingIO = false;
-  startClients();
+    clientdb.forEach(function(key, val) {
+      console.log('Found key: %s, val: %j', key, val);
+      clients.push(Netcat.client(23,val.address))
+    });
 
+    if(clients.length !== 0) {
+      startClients();
+    }
+    else {
+      startInit();
+    }
 
 });
 clientdb.on('drain', function() {
   console.log('All records are saved on disk now.');
 });
 
-if (clients.length == 0 && blockingIO == false) {
-  console.log("init");
-  initializationModule.start(clientdb, pushClient, startClients);
-}
 function handler(req, res){
 
   var form = '';

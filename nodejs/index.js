@@ -15,8 +15,6 @@ var clientModule = require('./lib/clientModule');
 var socketModule = require('./lib/socketModule');
 var initializationModule = require('./lib/initializationModule');
 var self = this;
-var blockingIO = true;
-
 var pushClient = function(data) {
   console.log("Back in clientCallback");
   clients.push (data);
@@ -99,11 +97,20 @@ function handler(req, res){
     else{
       fs.readFile(full_path, "binary", function(err, file) {
          if(err) {
-           res.writeHeader(500, {"Content-Type": "text/plain"});
-           console.log(full_path+" ends up here")
-           res.write(err + "\n" );
-           res.end();
 
+           if(full_path === __dirname+"/") {
+             fs.readFile(full_path+"/index.html", "binary", function(err, file) {
+               res.writeHeader(200);
+               res.write(file, "binary");
+               res.end();
+             });
+           }
+           else {
+             res.writeHeader(500, {"Content-Type": "text/plain"});
+             console.log(full_path+" ends up here")
+             res.write(err + "\n" );
+             res.end();
+           }
          }
           else{
           res.writeHeader(200);

@@ -1,5 +1,7 @@
 module.exports = {
+  closed: false,
   start: function (clients, dataCallback) {
+    var self = this;
     clients.map(function (client) {
       client.start();
 
@@ -9,7 +11,7 @@ module.exports = {
 
       client.on('data', function (data) {
         console.log('[DATA]', data.toString('ascii'));
-        dataCallback(data.toString('ascii'));
+        dataCallback(client,data.toString('ascii'));
       });
 
       client.on('error', function (err) {
@@ -18,13 +20,19 @@ module.exports = {
 
       client.on('close', function (data) {
         console.log('close', data);
-        client.start();
+        if(!self.closed) {
+          client.start();
+
+        }
+
       });
     });
   },
   stop: function (clients) {
     clients.map(function (client) {
-      client.stop();
+      console.log("Closing down: "+client._host);
+      closed = true;
+
     });
   },
   getBrightness: function (client, pin) {

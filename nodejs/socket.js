@@ -9,9 +9,8 @@ var element;
 var self = this;
 
 socket.on('presets', function (presets, data) {
-	var names = [];
 	select = document.getElementById('choosePreset');
-
+	names = [];
 	for (var i in presets) {
 		select.options[select.options.length] = new Option(presets[i].shortname, [presets[i].value+":"+presets[i].element]);
 	}
@@ -79,8 +78,8 @@ function savePreset(id) {
 		socket.emit('savebutton', {id: id, element: element, shortname: shortname, value: presetvalue});
 	}
 }
-function setPreset(val) {
-	socket.emit('setbutton', val);
+function setPreset() {
+	socket.emit('setbutton', data);
 }
 function choosePreset() {
 	var e = document.getElementById("choosePreset");

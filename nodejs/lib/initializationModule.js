@@ -45,14 +45,5 @@ module.exports = {
 
   });
 
-
-  var dataCallback = function (client,data) {
-    console.log(client._host+" "+data);
-    if(data === "Welcome to NodeMCU world.\n>\n") {
-      console.log("Client entry");
-
-    }
-    pushClient(client);
-  }
 }
 }

@@ -13,29 +13,27 @@
     <title>NodeJS Slider</title>
 
 </head>
-<body>
+<body onload="fetchPresets()">
     <h1>Desk light</h1>
-    <div id="computer" class="cell">
-    <input id="strip0" type="range" min="0" max="1023" step="1" value="setValue(0)" oninput="updateOutput(0,5,value)">
-    <input id="strip1" type="range" min="0" max="1023" step="1" value="setValue(1)" oninput="updateOutput(1,2,value)">
+    <div class="cell">
+    <input id="192.168.1.126:5" type="range" min="0" max="1023" step="1" value="getValue(0)" oninput="updateOutput(this.id,0,0,5,value)">
+    <input id="192.168.1.126:2" type="range" min="0" max="1023" step="1" value="getValue(1)" oninput="updateOutput(this.id,0,1,2,value)">
     </div>
     <h1>Computer light </h1>
     <div class="cell">
-    <input id="strip2" type="range" min="0" max="1023" step="1" value="setValue(2)" oninput="updateOutput(2,7,value)">
+    <input id="192.168.1.165:7" type="range" min="0" max="1023" step="1" value="getValue(2)" oninput="updateOutput(this.id,1,2,7,value)">
     </div>
     <h1>Presets </h1>
 	<div id="presets" class="cell">
     <div>
-    <button type="button" onclick="setPreset(gid,pin,presetvalue)">Load preset</button>
-    <select onchange="choosePreset(value)">
-      <option selected="selected">0</option>
-      <option>1</option>
-      <option>2</option>
+    <button type="button" onclick="setPreset(gid)">Load preset</button>
+    <select id="choosePreset" onchange="choosePreset()">
     </select>
     </div>
-    
-    <button type="button" onclick="savePreset(gid,pin,presetvalue)">Save preset</button>
-
+    <div>
+      <input id="input" type="text"></input>
+      <button type="button" onclick="savePreset(gid)">Save preset</button>
+    </div
 	</div>
 </body>
 </html>

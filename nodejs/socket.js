@@ -1,36 +1,78 @@
-var gid=0;
+var data;
+var cid;
 var presetvalue;
 var pin;
 var socket = io();
+var host;
+var element;
+var localPresets = [];
 
-var brightnesses = [];
+var self = this;
 
-brightnesses[0] = 0;
-brightnesses[1] = 0;
-brightnesses[2] = 0;
 
-function updateOutput(id, no, val) {
-	socket.emit("slider", {id: id, pin: no, value: val});
-	presetvalue = val;
-	pin = no;
-	gid = id;
-}
-function savePreset(id, no, val) {
-	socket.emit("savebutton", {id: id ,pin: no, value: val});
-}
-function setPreset(id, no, val) {
-	socket.emit("setbutton", {id: id ,pin: no, value: val});
-}
-function choosePreset(val) {
-	gid=val;
+function updateOutput(element,cid,id, no, val) {
+	var host = element.substr(0, element.indexOf(':'));
+	//console.log("Slider: "+	host+' '+id+' '+no+' '+val);
+	socket.emit('slider', {id: id, cid: cid, host: host, pin: no, value: val});
+	self.element = element;
+	self.presetvalue = val;
+	self.pin = no;
+
 }
 
-function setValue(id) {
-  return brightnesses[id];
+function savePreset(id) {
+	var host = element.substr(0, element.indexOf(':'));
+	shortname = document.getElementById("input").value;
+	console.log(id+" "+shortname+" "+element);
+	if(id.length != 0) {
+		socket.emit('savebutton', {id: id, element: element, shortname: shortname, value: presetvalue});
+	}
 }
+function setPreset(val) {
+	socket.emit('setbutton', val);
+}
+function choosePreset() {
+	var e = document.getElementById("choosePreset");
+	var val = e.options[e.selectedIndex].value;
+	console.log(val);
+	data = val;
+}
+function getValue(val) {
 
-socket.on('brightness', function (b) {
-  console.log(b);
-  brightnesses[2] = parseInt(b.brightness);
-  document.getElementById("strip2").value = brightnesses[2];
+}
+function fetchPresets() {
+	socket.emit('fetchpresets');
+}
+socket.on('presets', function (presets, data) {
+	select = document.getElementById('choosePreset');
+	console.log("Values: "+data);
+	var sliders = data.map(function(slider) {
+		console.log(slider.host+":"+slider.pin)
+		return document.getElementById(slider.host+":"+slider.pin)
+	});
+	for(var i in data) {
+		console.log("Setting value for slider:"+data[i].host+":"+data[i].pin)
+		if(sliders[i].id === data[i].host+":"+data[i].pin) {
+
+			sliders[i].value = data[i].value;
+		}
+	}
+
+	for (var i in presets) {
+		select.options[select.options.length] = new Option(presets[i].shortname, [presets[i].value+":"+presets[i].element]);
+
+	}
 });
+socket.on('brightness', function (b) {
+  console.log('brightness: '+b.host+':'+b.pin);
+
+  document.getElementById(b.host+':'+b.pin).value = parseInt(b.brightness);
+});
+var filter = function(data ) {
+	var value = data.substr(0, data.indexOf(':'));
+	var host = data.substring(data.indexOf(':')+1,data.lastIndexOf(':'));
+	var pin = data.substr(data.lastIndexOf(':'));
+	pin = pin.replace(':','');
+
+	return {value: value, host: host,pin: pin};
+}

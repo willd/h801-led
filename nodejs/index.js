@@ -16,24 +16,21 @@ var socketModule = require('./lib/socketModule');
 var initializationModule = require('./lib/initializationModule');
 var self = this;
 var pushClient = function(data) {
-  console.log("Back in clientCallback");
   clients.push (data);
 }
 var startClients = function() {
-
-  console.log("socket, client init");
   socketModule.clients = clients;
   clientModule.start(clients, dataCallback);
 }
 var startInit = function() {
-  console.log("init");
   initializationModule.start(clientdb, pushClient, startClients);
 }
 var id;
 var pin;
+var bridge;
 
-var dataCallback = function (client,data) {
-  //console.log(data.indexOf('brightness'));
+var dataCallback = function (container,data) {
+  console.log(data);
 
   if (data.indexOf('brightness:') > -1) {
 
@@ -42,13 +39,15 @@ var dataCallback = function (client,data) {
     console.log('Got brightness data', brightness, socketModule.socket !== null);
 
     if (socketModule.socket !== null) {
-      console.log('emitting...');
-      socketModule.socket.emit('brightness', { 'brightness': brightness });
+      console.log('emitting...'+container.client._host);
+      socketModule.socket.emit('brightness', {'pin': bridge, 'host': container.client._host, 'brightness': brightness });
     }
   }
 };
-var connectCallback = function () {
-  //clientModule.getBrightness(clients[1], 7);
+var connectCallback = function (id, pin) {
+  console.log("connectCallback: "+id+" "+pin)
+  clientModule.getBrightness(clients[id].client, pin);
+  bridge = pin;
 
 };
 
@@ -59,25 +58,28 @@ var path = require('path');
 
 db.on('load', function() {
   console.log('Loading values from key-value store');
+  db.forEach(function(key, val) {
+    console.log('Found key: %s, val: %j', key, val);
   });
+});
 db.on('drain', function() {
   console.log('All records are saved on disk now.');
 });
 clientdb.on('load', function() {
-
   console.log('Loading clients from key-value store');
+
     clientdb.forEach(function(key, val) {
       console.log('Found key: %s, val: %j', key, val);
-      clients.push(Netcat.client(23,val.address))
-    });
 
+      clients.push({key: key, client: Netcat.client(23,val.address)})
+
+    });
     if(clients.length !== 0) {
       startClients();
     }
     else {
       startInit();
     }
-
 });
 clientdb.on('drain', function() {
   console.log('All records are saved on disk now.');
@@ -97,7 +99,6 @@ function handler(req, res){
     else{
       fs.readFile(full_path, "binary", function(err, file) {
          if(err) {
-
            if(full_path === __dirname+"/") {
              fs.readFile(full_path+"/index.html", "binary", function(err, file) {
                res.writeHeader(200);
@@ -117,7 +118,6 @@ function handler(req, res){
           res.write(file, "binary");
           res.end();
         }
-
       });
     }
   });
@@ -129,4 +129,4 @@ var listener = http.createServer(handler).listen(3000, function(err){
   console.log("Server running at http://localhost:3000/");
   };
 });
-socketModule.start(listener, connectCallback);
+socketModule.start(db, listener, connectCallback);

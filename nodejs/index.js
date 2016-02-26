@@ -58,6 +58,7 @@ var path = require('path');
 
 db.on('load', function() {
   console.log('Loading values from key-value store');
+
   db.forEach(function(key, val) {
     console.log('Found key: %s, val: %j', key, val);
   });
@@ -67,11 +68,17 @@ db.on('drain', function() {
 });
 clientdb.on('load', function() {
   console.log('Loading clients from key-value store');
-
+  var id = 0;
     clientdb.forEach(function(key, val) {
       console.log('Found key: %s, val: %j', key, val);
+      for (i in val.pins) {
+        var object = {id: id, cid: key, shortname: val.shortname, value: 0, host: val.host, pin: val.pins[i]};
+        console.log();
+        socketModule.values.push(object);
+        id = id + 1;
+      }
 
-      clients.push({key: key, client: Netcat.client(23,val.address)})
+      clients.push({key: key, client: Netcat.client(23,val.host)})
 
     });
     if(clients.length !== 0) {

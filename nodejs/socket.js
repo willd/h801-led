@@ -37,32 +37,77 @@ function choosePreset() {
 	console.log(val);
 	data = val;
 }
-function getValue(val) {
-
-}
 function fetchPresets() {
 	socket.emit('fetchpresets');
 }
 socket.on('presets', function (presets, data) {
 	select = document.getElementById('choosePreset');
-	console.log("Values: "+data);
-	var sliders = data.map(function(slider) {
-		console.log(slider.host+":"+slider.pin)
-		return document.getElementById(slider.host+":"+slider.pin)
-	});
-	for(var i in data) {
-		console.log("Setting value for slider:"+data[i].host+":"+data[i].pin)
-		if(sliders[i].id === data[i].host+":"+data[i].pin) {
-
-			sliders[i].value = data[i].value;
-		}
-	}
 
 	for (var i in presets) {
 		select.options[select.options.length] = new Option(presets[i].shortname, [presets[i].value+":"+presets[i].element]);
+	}
+	var body = document.getElementsByTagName("body")[0];
 
+	for(var i in data) {
+		console.log(i+" "+data[i].shortname);
+		var cell;
+		if (i == 0) {
+
+			cell = newCell(data[i]);
+			cell.className="cell";
+			var h1 = document.createElement("h1");
+			var text = document.createTextNode(data[i].shortname);
+			h1.appendChild(text);
+
+			body.appendChild(h1);
+		}
+		else {
+			if(data[i-1].cid == data[i].cid) {
+					cell = appendCell(cell,data[i])
+			}
+			else {
+				cell = newCell(data[i]);
+				cell.className="cell";
+				var h1 = document.createElement("h1");
+				var text = document.createTextNode(data[i].shortname);
+				h1.appendChild(text);
+
+				body.appendChild(h1);
+			}
+		}
+
+
+		body.appendChild(cell);
 	}
 });
+var newCell = function (data) {
+	var cell = document.createElement("div");
+	var input = document.createElement("input");
+
+	input.id=data.host+":"+data.pin;
+	input.type="range";
+	input.min="0";
+	input.max="1023";
+	input.step="1";
+	input.value=data.value;
+	input.setAttribute("oninput","updateOutput(this.id,"+data.cid+","+data.id+","+data.pin+",value)");
+	cell.appendChild(input);
+	return cell;
+}
+var appendCell = function (cell, data) {
+	input = document.createElement("input");
+
+	input.id=data.host+":"+data.pin;
+	input.type="range";
+	input.min="0";
+	input.max="1023";
+	input.step="1";
+	input.value=data.value;
+	input.oninput="updateOutput(this.id,"+data.cid+","+data.id+","+data.pin+",value)";
+	cell.appendChild(input);
+	return cell;
+
+}
 socket.on('brightness', function (b) {
   console.log('brightness: '+b.host+':'+b.pin);
 

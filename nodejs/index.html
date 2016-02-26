@@ -14,15 +14,7 @@
 
 </head>
 <body onload="fetchPresets()">
-    <h1>Desk light</h1>
-    <div class="cell">
-    <input id="192.168.1.126:5" type="range" min="0" max="1023" step="1" value="getValue(0)" oninput="updateOutput(this.id,0,0,5,value)">
-    <input id="192.168.1.126:2" type="range" min="0" max="1023" step="1" value="getValue(1)" oninput="updateOutput(this.id,0,1,2,value)">
-    </div>
-    <h1>Computer light </h1>
-    <div class="cell">
-    <input id="192.168.1.165:7" type="range" min="0" max="1023" step="1" value="getValue(2)" oninput="updateOutput(this.id,1,2,7,value)">
-    </div>
+
     <h1>Presets </h1>
 	<div id="presets" class="cell">
     <div>
@@ -33,7 +25,7 @@
     <div>
       <input id="input" type="text"></input>
       <button type="button" onclick="savePreset(gid)">Save preset</button>
-    </div
+    </div>
 	</div>
 </body>
 </html>

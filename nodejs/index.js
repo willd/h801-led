@@ -78,7 +78,7 @@ clientdb.on('load', function() {
         id = id + 1;
       }
 
-      clients.push({key: key, client: Netcat.client(23,val.host)})
+      clients.push({key: key, client: Netcat.client(11112,val.host)})
 
     });
     if(clients.length !== 0) {

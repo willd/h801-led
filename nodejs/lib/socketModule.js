@@ -20,7 +20,8 @@ module.exports = {
         var id = data.id; // Output id
         var host = data.host; // Unit ip
         var cid = data.cid; // Unit id
-        var object = {id: id, cid: cid, value: value, host: host, pin: pin};
+        var shortname = data.shortname;
+        var object = {id: id, cid: cid, shortname: shortname, value: value, host: host, pin: pin};
         var ids = self.values.map(function(value) {
                     return value.id;
         });

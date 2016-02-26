@@ -24,7 +24,7 @@ module.exports = {
 
       return function (signal) {
 
-        scanner.run (_host, '23', save, signal);
+        scanner.run (_host, '11112', save, signal);
       }
     });
 
@@ -33,12 +33,12 @@ module.exports = {
     console.log (addresses);
     var id = 0
     var clients = addresses.map(function(address) {
-      return Netcat.client(23,address);
+      return Netcat.client(11112,address);
     });
     //clientModule.start(clients,dataCallback);
     var cb = clients.map(function(client) {
       pushClient(client);
-      db.set(id,{address: client._host,pins: [2,5,7]});
+      db.set(id,{host: client._host,pins: [2,5,7]});
       id=id+1;
     });
     next ();

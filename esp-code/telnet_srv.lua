@@ -32,5 +32,5 @@ function setupTelnetServer()
   end
 
   telnetServer = net.createServer(net.TCP, 720)
-  telnetServer:listen(23, listenFun)
+  telnetServer:listen(11112, listenFun)
 end

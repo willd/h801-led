@@ -5,7 +5,6 @@ var pin;
 var socket = io();
 var host;
 var element;
-
 var self = this;
 
 socket.on('presets', function (presets, data) {
@@ -29,6 +28,7 @@ socket.on('presets', function (presets, data) {
 
 	})
 		var cells = [[],[]];
+		var names = [];
 
 		for(var j in data) {
 			console.log(data[j]);
@@ -38,18 +38,35 @@ socket.on('presets', function (presets, data) {
 			h1.appendChild(text);
 			var id = data[j].cid;
 			var objects = inputs[j];
-			cells[id].push(h1);
-			cells[id].push(inputs[j]);
+			if(names.length === 0) {
+				names.push(h1);
+			}
+			else {
+				for(var i in names) {
+					if(names[i].innerHTML === h1.innerHTML) {
+						console.log("lolol");
+					}
+					else {
+						names.push(h1);
+					}
+				}
+				}
 
-			console.log(cells[0]);
-		}
+			cells[id].push(inputs[j]);
+			//console.log(cells[0][1]);
+			}
+
+		console.log(names);
 		for (var i in cells) {
 			var cell = document.createElement("div");
 			cell.className = "cell";
-			cell.id = data[i].shortname;
+			cell.id = data[i].cid;
 			for (var j in cells[i]) {
-				body.appendChild(cells[i][j]);
+				cell.appendChild(cells[i][j]);
 			}
+			
+			body.appendChild(names[i]);
+			body.appendChild(cell);
 		}
 
 });
@@ -117,6 +134,15 @@ var appendCell = function (cell, data) {
 	cell.appendChild(input);
 	return cell;
 
+}
+
+var contains = function (a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
 }
 
 var filter = function(data ) {

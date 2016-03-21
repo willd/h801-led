@@ -96,7 +96,7 @@ function handler(req, res){
 
   var form = '';
   var my_path = url.parse(req.url).pathname;
-  var full_path = path.join(process.cwd(),my_path);
+  var full_path = path.join(__dirname+'/',my_path);
   fs.exists(full_path,function(exists){
     if(!exists){
       res.writeHeader(404, {"Content-Type": "text/plain"});

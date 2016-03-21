@@ -4,7 +4,7 @@ var http = require('http');
 var os = require('os');
 var dirty = require('dirty');
 var db = dirty(__dirname+'/'+'presets.db');
-var clientdb = dirty(__dirname+'/'+'clients.db')
+var clientdb = dirty(__dirname+'/'+'clients.db');
 
 var clients = [
 //  Netcat.client(8001,'localhost'),

@@ -31,7 +31,7 @@ socket.on('presets', function (presets, data) {
 		var names = [];
 
 		for(var j in data) {
-			console.log(data[j]);
+			//console.log(data[j]);
 
 			var h1 = document.createElement("h1");
 			var text = document.createTextNode(data[j].shortname);
@@ -44,7 +44,7 @@ socket.on('presets', function (presets, data) {
 			else {
 				for(var i in names) {
 					if(names[i].innerHTML === h1.innerHTML) {
-						console.log("lolol");
+						console.log("Don't add secondaries");
 					}
 					else {
 						names.push(h1);
@@ -56,7 +56,7 @@ socket.on('presets', function (presets, data) {
 			//console.log(cells[0][1]);
 			}
 
-		console.log(names);
+		//console.log(names);
 		for (var i in cells) {
 			var cell = document.createElement("div");
 			cell.className = "cell";
@@ -64,7 +64,7 @@ socket.on('presets', function (presets, data) {
 			for (var j in cells[i]) {
 				cell.appendChild(cells[i][j]);
 			}
-			
+
 			body.appendChild(names[i]);
 			body.appendChild(cell);
 		}
@@ -79,9 +79,8 @@ socket.on('brightness', function (b) {
 function updateOutput(element,cid,id, no, val) {
 	var host = element.id.substr(0, element.id.indexOf(':'));
 
-	//console.log("Slider: "+	host+' '+id+' '+no+' '+val);
-	socket.emit('slider', {id: id, cid: cid, shortname: element.parentNode.id, host: host, pin: no, value: val});
-	self.element = element;
+	socket.emit('slider', {id: id, cid: cid, shortname: document.getElementsByTagName("h1")[cid+1].innerHTML, host: host, pin: no, value: val});
+	//self.element = element;
 	self.presetvalue = val;
 	self.pin = no;
 
@@ -90,7 +89,7 @@ function updateOutput(element,cid,id, no, val) {
 function savePreset(id) {
 	var host = element.substr(0, element.indexOf(':'));
 	shortname = document.getElementById("input").value;
-	console.log(id+" "+shortname+" "+element);
+	//console.log(id+" "+shortname+" "+element);
 	if(id.length != 0) {
 		socket.emit('savebutton', {id: id, element: element, shortname: shortname, value: presetvalue});
 	}
@@ -101,7 +100,7 @@ function setPreset() {
 function choosePreset() {
 	var e = document.getElementById("choosePreset");
 	var val = e.options[e.selectedIndex].value;
-	console.log(val);
+	//console.log(val);
 	data = val;
 }
 function fetchPresets() {
